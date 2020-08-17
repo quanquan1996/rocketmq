@@ -849,44 +849,45 @@ public class BrokerController {
     }
 
     public void start() throws Exception {
+        //启动消息存储逻辑类的实例
         if (this.messageStore != null) {
             this.messageStore.start();
         }
-
+        //启动远程请求Server
         if (this.remotingServer != null) {
             this.remotingServer.start();
         }
-
+        //启动快速远程请求Server
         if (this.fastRemotingServer != null) {
             this.fastRemotingServer.start();
         }
-
+        //启动文件观察者线程
         if (this.fileWatchService != null) {
             this.fileWatchService.start();
         }
-
+        //启动远程调用Service
         if (this.brokerOuterAPI != null) {
             this.brokerOuterAPI.start();
         }
-
+        //启动pullRequest的Hold线程
         if (this.pullRequestHoldService != null) {
             this.pullRequestHoldService.start();
         }
-
+        //这个不知道是干嘛用的
         if (this.clientHousekeepingService != null) {
             this.clientHousekeepingService.start();
         }
-
+        //启动消息过滤管理器
         if (this.filterServerManager != null) {
             this.filterServerManager.start();
         }
-
+        //如果不是Dleger就启动主从同步相关的
         if (!messageStoreConfig.isEnableDLegerCommitLog()) {
             startProcessorByHa(messageStoreConfig.getBrokerRole());
             handleSlaveSynchronize(messageStoreConfig.getBrokerRole());
             this.registerBrokerAll(true, false, true);
         }
-
+        //启动一个线程发心跳
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
